@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1729591593 source:d:\lthtm1\doan\main.cpp
+	<iostream>
+	<cstring>
+	<string>
+	<winsock2.h>
+	<ws2tcpip.h>
+
