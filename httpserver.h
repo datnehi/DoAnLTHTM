@@ -1,28 +1,23 @@
-#ifndef HTTPSERVER_H
-#define HTTPSERVER_H
+#ifndef _HTTP_SERVER_H_
+#define _HTTP_SERVER_H_
 
 #include "tcpserver.h"
-#include "httpsession.h"
-#include "httpserverconfig.h"
+#include <string>
 
-class SMTPServer: public TCPServer
+class HttpTcpServer : public TCPServer
 {
-
 public:
-    HTTPServer(unsigned short port=1708);
-    ~HTTPServer();
-    bool configServer();
-protected:
+    HttpTcpServer(unsigned short port = 80);
+    ~HttpTcpServer();
 
-    void cleanServer();
-    SMTPServerConfig* getServerConfig() {return (SMTPServerConfig*)conf;}
-    bool loadServerConfig(const string& confFileName);
-    void startNewSession(TcpSocket slave);
-    void initCmd();
-private:
-    int readCmd(TcpSocket& slave, string& cmdLine);
-    unsigned short parseCmd(const string& cmdLine, string cmd_argv[], int& cmd_argc);
 protected:
+    void startNewSession(TcpSocket slave);
+    int processHttpRequest(TcpSocket& slave);
+
+    // Các hàm xử lý phương thức HTTP
+    void handlePostRequest(TcpSocket& slave, const std::string& request);
+    void handlePutRequest(TcpSocket& slave, const std::string& request);
+    void handleUnknownRequest(TcpSocket& slave);
 };
 
-#endif // HTTPSERVER_H
+#endif // _HTTP_SERVER_H_
