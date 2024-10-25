@@ -1,11 +1,12 @@
 #include <iostream>
 #include "servercli.h"
+#include "httpserver.h"
 
 ServerCLI::ServerCLI():CmdLineInterface("server>")
 {
     cout << "Simple HTTP Server v2" << endl;
     initCmd();
-    http = new HTTPServer();
+    http = new HttpTcpServer();
     //if(!smtp->configServer())
     //{
     //    cerr << "Error: Cannot load server configuration" << endl;

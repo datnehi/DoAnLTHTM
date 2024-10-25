@@ -7,10 +7,10 @@
 #include <windows.h>
 #endif // _WIN32
 
-class ServerCLI : public CmdLineInterfac
+class ServerCLI : public CmdLineInterface
 {
 private:
-    HTTPServer* http;
+    HttpTcpServer* http;
 public:
     ServerCLI();
     ~ServerCLI();

@@ -6,12 +6,8 @@
 	<winsock2.h>
 	<ws2tcpip.h>
 
-1729670044 source:d:\doanlthtm\main.cpp
-	<iostream>
-	<cstring>
-	<string>
-	<winsock2.h>
-	<ws2tcpip.h>
+1729762032 source:d:\doanlthtm\main.cpp
+	"servercli.h"
 
 1648535401 source:d:\doanlthtm\cli.cpp
 	<iostream>
@@ -85,7 +81,7 @@
 	<errno.h>
 	"tcpsocket.h"
 
-1729761673 source:d:\doanlthtm\httpserver.cpp
+1729848798 source:d:\doanlthtm\httpserver.cpp
 	"httpserver.h"
 	<iostream>
 	<sstream>
@@ -99,4 +95,20 @@
 1650550073 d:\doanlthtm\tcpserver.h
 	"tcpserversocket.h"
 	"session.h"
+
+1729849535 d:\doanlthtm\servercli.h
+	"cli.h"
+	"httpserver.h"
+	<windows.h>
+
+1729849688 source:d:\doanlthtm\servercli.cpp
+	<iostream>
+	"servercli.h"
+	"httpserver.h"
+
+1729852194 source:d:\doanlthtm\tcpserver.cpp
+	<thread>
+	<thread>
+	<iostream>
+	"tcpserver.h"
 

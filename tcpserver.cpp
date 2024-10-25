@@ -64,8 +64,8 @@ bool TCPServer::start()
         this->master.setListen(this->port);
         running = true;
         // create a thread to run TCPServer::run
-        std::thread t(&TCPServer::run,this);
-        t.detach();
+//        std::thread t(&TCPServer::run,this);
+//        t.detach();
         return running;
         //this->run();
     }
@@ -91,8 +91,8 @@ bool TCPServer::restart()
         running = true;
         // create a thread to run TCPServer::run
 
-        std::thread t(&TCPServer::run,this);
-        t.detach();
+//        std::thread t(&TCPServer::run,this);
+//        t.detach();
         return true;
 
     }
@@ -135,8 +135,8 @@ void TCPServer::run()
         try
         {
 #ifdef _CONCURRENT_MT_SERVER_
-            std::thread t(&TCPServer::startNewSession,this,slave);
-            t.detach();
+//            std::thread t(&TCPServer::startNewSession,this,slave);
+//            t.detach();
 #else
             this->startNewSession(slave);
 #endif // _CONCURRENCE_H*/
