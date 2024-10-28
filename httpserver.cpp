@@ -114,7 +114,7 @@ void HttpTcpServer::handlePostRequest(TcpSocket &slave, const std::string &reque
         "Content-Type: text/plain\r\n"
         "Content-Length: 14\r\n"
         "\r\n"
-        "Post received!";
+        "Post received!\r\n";
     slave.send(response.c_str(), response.size());
 }
 
@@ -138,7 +138,7 @@ void HttpTcpServer::handlePutRequest(TcpSocket &slave, const std::string &reques
         "Content-Type: text/plain\r\n"
         "Content-Length: 13\r\n"
         "\r\n"
-        "Put received!";
+        "Put received!\r\n";
     slave.send(response.c_str(), response.size());
 }
 
@@ -150,6 +150,6 @@ void HttpTcpServer::handleUnknownRequest(TcpSocket &slave)
         "Content-Type: text/plain\r\n"
         "Content-Length: 23\r\n"
         "\r\n"
-        "Method not supported!";
+        "Method not supported!\r\n";
     slave.send(response.c_str(), response.size());
 }

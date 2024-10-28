@@ -7,7 +7,7 @@
 class HttpTcpServer : public TCPServer
 {
 public:
-    HttpTcpServer(unsigned short port = 80);
+    HttpTcpServer(unsigned short port = 1708);
     ~HttpTcpServer();
 
 protected:
