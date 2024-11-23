@@ -18,6 +18,7 @@ protected:
     void handlePostRequest(TcpSocket& slave, const std::string& request);
     void handlePutRequest(TcpSocket& slave, const std::string& request);
     void handleUnknownRequest(TcpSocket& slave);
+    void connectRequest(TcpSocket& slave);
 };
 
 #endif // _HTTP_SERVER_H_

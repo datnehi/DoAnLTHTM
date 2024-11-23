@@ -7,12 +7,6 @@ ServerCLI::ServerCLI():CmdLineInterface("server>")
     cout << "Simple HTTP Server v2" << endl;
     initCmd();
     http = new HttpTcpServer();
-    //if(!smtp->configServer())
-    //{
-    //    cerr << "Error: Cannot load server configuration" << endl;
-    //    delete smtp;
-    //    exit(-1);
-    //}
 }
 ServerCLI::~ServerCLI()
 {

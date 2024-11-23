@@ -14,63 +14,93 @@ HttpTcpServer::~HttpTcpServer()
 
 void HttpTcpServer::startNewSession(TcpSocket slave)
 {
+    std::cout << "Client connect ok." << std::endl;
+    connectRequest(slave);
     bool session = true;
     while (session)
     {
         int r = processHttpRequest(slave);
-        if (r <= 0)
-            session = false;
+        if (r <= 0) session = false;
     }
+    std::cout << "Client disconnect." << std::endl;
     slave.close();
 }
 
 // Hàm xử lý yêu cầu HTTP
 int HttpTcpServer::processHttpRequest(TcpSocket &slave)
 {
+    std::string headers;
     char buf[2048];
     int byte_recv;
+
     try
     {
-        // Nhận dữ liệu từ client (request HTTP)
-        byte_recv = slave.recv(buf, 2048);
-        if (byte_recv > 0)
+        // Đọc toàn bộ phần header
+        while (true)
         {
-            // Chuyển đổi buffer nhận được thành chuỗi (request HTTP)
-            std::string request(buf, byte_recv);
+            byte_recv = slave.recvLine(buf, 2048);
+            if (byte_recv < 0)
+                return -1; // Lỗi hoặc kết nối bị đóng
 
-            // In ra request để debug
-            std::cout << "Received HTTP request:\n" << request << std::endl;
+            std::string line(buf, byte_recv);
+            headers += line;
 
-            // Tách dòng đầu tiên của request để phân tích cú pháp
-            std::istringstream request_stream(request);
-            std::string request_line;
-            std::getline(request_stream, request_line);
+            // Kiểm tra kết thúc header
+            if (headers.find("\r\n\r\n") != std::string::npos)
+                break;
+        }
 
-            // Phân tích dòng đầu tiên để lấy phương thức, đường dẫn và phiên bản HTTP
-            std::istringstream line_stream(request_line);
-            std::string method, path, version;
-            line_stream >> method >> path >> version;
+        // In ra header để debug
+        std::cout << "Received HTTP headers:\n" << headers << std::endl;
 
-            // Chuyển đổi method sang chữ hoa để dễ xử lý
-            std::transform(method.begin(), method.end(), method.begin(), ::toupper);
-
-            // Xử lý các phương thức HTTP khác nhau
-//            if (method == "GET")
-//            {
-//                handleGetRequest(slave, path);
-//            }
-            if (method == "POST")
+        // Đọc phần body cho đến khi gặp chuỗi kết thúc "\r\n\r\n" (hoặc một delimiter khác)
+        std::string body;
+        size_t delimiter_pos = headers.find("\r\n\r\n");
+        if (delimiter_pos != std::string::npos)
+        {
+            // Tiến hành đọc body cho đến khi gặp delimiter
+            char* body_buf = new char[2048];  // Đặt kích thước buffer phù hợp với dữ liệu
+            while (true)
             {
-                handlePostRequest(slave, request);
+                byte_recv = slave.recv(body_buf, 2048);
+                if (byte_recv < 0)
+                    break;  // Lỗi hoặc kết nối bị đóng
+
+                body.append(body_buf, byte_recv);
+
+                // Kiểm tra nếu body đã chứa delimiter
+                if (body.find("\r\n\r\n") != std::string::npos)
+                    break;
             }
-            else if (method == "PUT")
-            {
-                handlePutRequest(slave, request);
-            }
-            else
-            {
-                handleUnknownRequest(slave);
-            }
+
+            std::cout << "Received HTTP body:\n" << body << std::endl;
+
+            delete[] body_buf;
+        }
+
+        // Xử lý request dựa trên method
+        std::istringstream request_stream(headers);
+        std::string request_line;
+        std::getline(request_stream, request_line);
+
+        std::istringstream line_stream(request_line);
+        std::string method, path, version;
+        line_stream >> method >> path >> version;
+
+        // Chuyển method sang chữ hoa
+        std::transform(method.begin(), method.end(), method.begin(), ::toupper);
+
+        if (method == "POST")
+        {
+            handlePostRequest(slave, body);
+        }
+        else if (method == "PUT")
+        {
+            handlePutRequest(slave, body);
+        }
+        else
+        {
+            handleUnknownRequest(slave);
         }
     }
     catch (SocketException &e)
@@ -81,32 +111,22 @@ int HttpTcpServer::processHttpRequest(TcpSocket &slave)
     return byte_recv;
 }
 
-// Xử lý yêu cầu GET
-//void HttpTcpServer::handleGetRequest(TcpSocket &slave, const std::string &path)
-//{
-//    // Trả về response cho GET
-//    std::string response =
-//        "HTTP/1.1 200 OK\r\n"
-//        "Content-Type: text/html\r\n"
-//        "Content-Length: 13\r\n"
-//        "\r\n"
-//        "<h1>Hello</h1>";
-//    slave.send(response.c_str(), response.size());
-//}
+
+
 
 // Xử lý yêu cầu POST
 void HttpTcpServer::handlePostRequest(TcpSocket &slave, const std::string &request)
 {
-    // Giả sử phần body nằm sau phần header (tìm vị trí đầu tiên của "\r\n\r\n")
-    size_t body_pos = request.find("\r\n\r\n");
-    std::string body;
-    if (body_pos != std::string::npos)
-    {
-        body = request.substr(body_pos + 4); // Lấy phần body sau \r\n\r\n
-    }
+//    // Giả sử phần body nằm sau phần header (tìm vị trí đầu tiên của "\r\n\r\n")
+//    size_t body_pos = request.find("\r\n\r\n");
+//    std::string body;
+//    if (body_pos != std::string::npos)
+//    {
+//        body = request.substr(body_pos + 4); // Lấy phần body sau \r\n\r\n
+//    }
 
     // In body để debug (nội dung gửi trong POST)
-    std::cout << "POST Body:\n" << body << std::endl;
+    std::cout << "POST Body:\n" << request << std::endl;
 
     // Trả về response cho POST
     std::string response =
@@ -121,16 +141,16 @@ void HttpTcpServer::handlePostRequest(TcpSocket &slave, const std::string &reque
 // Xử lý yêu cầu PUT
 void HttpTcpServer::handlePutRequest(TcpSocket &slave, const std::string &request)
 {
-    // Tương tự như POST, lấy phần body của PUT
-    size_t body_pos = request.find("\r\n\r\n");
-    std::string body;
-    if (body_pos != std::string::npos)
-    {
-        body = request.substr(body_pos + 4); // Lấy phần body sau \r\n\r\n
-    }
+//    // Tương tự như POST, lấy phần body của PUT
+//    size_t body_pos = request.find("\r\n\r\n");
+//    std::string body;
+//    if (body_pos != std::string::npos)
+//    {
+//        body = request.substr(body_pos + 4); // Lấy phần body sau \r\n\r\n
+//    }
 
     // In body để debug (nội dung gửi trong PUT)
-    std::cout << "PUT Body:\n" << body << std::endl;
+    std::cout << "PUT Body:\n" << request << std::endl;
 
     // Trả về response cho PUT
     std::string response =
@@ -151,5 +171,11 @@ void HttpTcpServer::handleUnknownRequest(TcpSocket &slave)
         "Content-Length: 23\r\n"
         "\r\n"
         "Method not supported!\r\n";
+    slave.send(response.c_str(), response.size());
+}
+
+void HttpTcpServer::connectRequest(TcpSocket &slave)
+{
+    std::string response = "Connect server complete.\r\n";
     slave.send(response.c_str(), response.size());
 }
