@@ -117,14 +117,6 @@ int HttpTcpServer::processHttpRequest(TcpSocket &slave)
 // Xử lý yêu cầu POST
 void HttpTcpServer::handlePostRequest(TcpSocket &slave, const std::string &request)
 {
-//    // Giả sử phần body nằm sau phần header (tìm vị trí đầu tiên của "\r\n\r\n")
-//    size_t body_pos = request.find("\r\n\r\n");
-//    std::string body;
-//    if (body_pos != std::string::npos)
-//    {
-//        body = request.substr(body_pos + 4); // Lấy phần body sau \r\n\r\n
-//    }
-
     // In body để debug (nội dung gửi trong POST)
     std::cout << "POST Body:\n" << request << std::endl;
 
@@ -141,14 +133,6 @@ void HttpTcpServer::handlePostRequest(TcpSocket &slave, const std::string &reque
 // Xử lý yêu cầu PUT
 void HttpTcpServer::handlePutRequest(TcpSocket &slave, const std::string &request)
 {
-//    // Tương tự như POST, lấy phần body của PUT
-//    size_t body_pos = request.find("\r\n\r\n");
-//    std::string body;
-//    if (body_pos != std::string::npos)
-//    {
-//        body = request.substr(body_pos + 4); // Lấy phần body sau \r\n\r\n
-//    }
-
     // In body để debug (nội dung gửi trong PUT)
     std::cout << "PUT Body:\n" << request << std::endl;
 
